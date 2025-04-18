@@ -1,6 +1,7 @@
 "use client";
 import React from 'react'
 import { Input } from '../../../components/ui/input';
+import { DataTable } from '../../../components/ui/dataTable';
 import {
   Select,
   SelectContent,
@@ -36,6 +37,7 @@ export default function history() {
     </Select>
     </div>
         </div>
+        <DataTable/>
       </div>
     );
 }
