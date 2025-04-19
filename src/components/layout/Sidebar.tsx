@@ -4,11 +4,17 @@ import Image from "next/image";
 import { usePathname } from "next/navigation";
 import { motion } from "framer-motion";
 import Link from "next/link";
+import { useRouter } from 'next/navigation'; 
+
 
 const Sidebar = ({ userRole }: { userRole: string }) => {
+  const router = useRouter();
   const pathname = usePathname();
   const isAuthRoute = pathname.startsWith("/auth");
-
+const handleLogOut=()=>
+{
+  router.push('/auth')
+}
   const sidebarLinks: SidebarLink[] = userRole === "admin" 
     ? adminSidebarLinks 
     : userRole === "commercial" 
@@ -76,7 +82,7 @@ const Sidebar = ({ userRole }: { userRole: string }) => {
                     height={20}
                     alt=""
                   />
-                  <p className="text-[#C1121F] font-medium cursor-pointer">Log out</p>
+                  <p onClick={handleLogOut} className="text-[#C1121F] font-medium cursor-pointer">Log out</p>
                 </div>
               </div>
             </motion.div>

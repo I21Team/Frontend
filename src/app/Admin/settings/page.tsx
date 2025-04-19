@@ -62,9 +62,9 @@ export default function settingsPage() {
       <SelectValue placeholder="Filter" />
     </SelectTrigger>
     <SelectContent className='bg-white'>
-      <SelectItem value="Product1">Product1</SelectItem>
-      <SelectItem value="Product2">Product2</SelectItem>
-      <SelectItem value="Product3">Product3</SelectItem>
+      <SelectItem value="Store1">Store1</SelectItem>
+      <SelectItem value="Store2">Store2</SelectItem>
+      <SelectItem value="Store3">Store3</SelectItem>
     </SelectContent>
   </Select>
   </div>
