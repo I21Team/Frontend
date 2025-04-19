@@ -1,61 +1,37 @@
-import { ColumnDef } from "@tanstack/react-table"
-
-
-// id: number;
-// type_id: number;
-// state_type_id: number;
-// user_id: number | null;
-// mac_address: string;
-// software_version: string;
-// date_of_service: Date;
-// comm_state: boolean;
-// connection_state: boolean | null;
-// battery_capacity: number;
 
 
 export const columns = [
     {
-      accessorKey: "type_id",
-      header: "Type",
+      accessorKey: "product_id",
+      header: "Product",
     },
     {
-      accessorKey: "software_version",
-      header: "Version logicielle",
+      accessorKey: "store_id",
+      header: "Store",
     },
     {
-      accessorKey: "date_of_service",
-      header: "Date de mise en service",
+      accessorKey: "store_location",
+      header: "Store location",
     },
     {
-      accessorKey: "comm_state",
-      header: "État de communication",
+      accessorKey: "featured",
+      header: "featured",
     },
     {
-      accessorKey: "connection_state",
-      header: "Connexion",
+      accessorKey: "displayed",
+      header: "Displayed",
     },
     {
-      accessorKey: "battery_capacity",
-      header: "Batterie",
-    },
-    // {
-    //   accessorKey: "last_position",
-    //   header: "Dernière position",
-    // },
-    {
-      accessorKey: "state_type_id",
-      header: "Fonctionnement",
-    },
-    {
-      accessorKey: "user_id",
-      header: "Prénom du client",
-    },
-    {
-      accessorKey: "user_id",
-      header: "Nom de famille du client",
-    },
-    {
-      accessorKey: "actions",
-      header: "Actions",
-    },
+        accessorKey: "units",
+        header: "Units",
+      },
+      {
+        accessorKey: "price",
+        header: "Price",
+      },
+  
   ];
+
+ export const data=
+[
+  {product_id:"Product1",store_id: "Store1" , store_location:"Alger",featured:"Top picks",displayed:"hidden", units:"120",price:"1200 DA"} ,{product_id:"Product1",store_id: "Store1" , store_location:"Alger",featured:"Top picks",displayed:"hidden", units:"120",price:"1200 DA"} ,{product_id:"Product1",store_id: "Store1" , store_location:"Alger",featured:"Top picks",displayed:"hidden", units:"120",price:"1200 DA"} ,{product_id:"Product1",store_id: "Store1" , store_location:"Alger",featured:"Top picks",displayed:"hidden", units:"120",price:"1200 DA"} ,{product_id:"Product1",store_id: "Store1" , store_location:"Alger",featured:"Top picks",displayed:"hidden", units:"120",price:"1200 DA"} ,{product_id:"Product1",store_id: "Store1" , store_location:"Alger",featured:"Top picks",displayed:"hidden", units:"120",price:"1200 DA"} , ]

@@ -37,7 +37,7 @@ export const adminSidebarLinks: SidebarLink[] = [
     name: "Settings",
     href: "/Admin/settings",
     icon1: "/settings.svg",
-    icon2: "/settings_white.svg",
+    icon2: "/setting_white.svg",
 
   },
 

@@ -26,12 +26,8 @@ const goToProfile = () => {
   return (
     <>
       {!isAuthRoute && (
-        <div className="z-50 bg-white   p-2  border-b-[#E6EFF5] border-b-[1px]  sticky font-montserrat mx-auto top-0 text-2xl w-[95%] text-[#003049] ml-auto items-center text-main font-semibold rounded-[15px] flex justify-between">
+        <div className="z-50 bg-white   p-2 px-4  border-b-[#E6EFF5] border-b-[1px]  sticky font-montserrat mx-auto top-0 text-2xl w-[95%] text-[#003049] ml-auto items-center text-main font-semibold rounded-[15px] flex justify-between">
           <div>{getTitle()}</div>
-
-
-
-
           <div className=" flex w-[130px] items-center justify-between rounded-full">
           <Image 
 src="/notification.svg"
@@ -43,22 +39,15 @@ src="/notification.svg"
     // notificaton logique
   }
   } />
-  <Image 
+  { !pathname.startsWith("/Admin/profile") && (<Image 
 src="/user.svg"
  width={50}
   height={50} 
   alt="" 
-  className="mx-auto" onClick={goToProfile} />
+  className="mx-auto" onClick={goToProfile} />)}
+  
           </div>
-        
-
-          {/* <Image
-            src="/assets/layout/avatar.svg"
-            width={50}
-            height={50}
-            alt=""
-            className="xl:scale-100 scale-75 mx-auto"
-          />{" "} */}
+      
         </div>
       )}{" "}
     </>

@@ -8,23 +8,17 @@ import {
   useReactTable,
 } from "@tanstack/react-table";
 
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/shared/table";
+import { Table ,TableBody,TableCell,
+    TableHead,
+    TableHeader,
+    TableRow, } from "@/components/ui/table";
 
-import {
-  Pagination,
-  PaginationContent,
-  PaginationLink,
-  PaginationItem,
-  PaginationPrevious,
-  PaginationNext,
-} from "@/components/shared/pagination";
+import { Pagination ,  PaginationContent,
+    PaginationLink,
+    PaginationItem,
+    PaginationPrevious,
+    PaginationNext,
+   } from "@/components/ui/pagination";
 
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
@@ -46,13 +40,13 @@ export function DataTable<TData, TValue>({
     <div>
       <div>
         <Table className="rounded-lg">
-          <TableHeader className="bg-[#2B7A78] text-white rounded-t-lg">
+          <TableHeader className=" text-[#71717A] bg-white rounded-t-lg">
             {table.getHeaderGroups().map((headerGroup) => (
               <TableRow key={headerGroup.id} className="border-none">
                 {headerGroup.headers.map((header) => (
                   <TableHead
                     key={header.id}
-                    className="py-3 text-white font-medium border-r border-teal-600 last:border-r-0">
+                    className="py-3 text-[base/muted-foreground ] font-medium border-r last:border-r-0">
                     {header.isPlaceholder
                       ? null
                       : flexRender(

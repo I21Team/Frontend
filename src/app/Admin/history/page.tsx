@@ -9,10 +9,15 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select"
-export default function history() {
+import { columns } from '../../../data/TbaleData';
+import { data } from '../../../data/TbaleData';
+
+export default function historyPage() {
+
+  
     return (
       <div className="bg-[#F6F7F9] w-[95%] mx-auto p-4">
-        <div className='flex justify-between'>
+        <div className='flex justify-between mb-10'>
         <Input placeholder="Search for something" icon={<img src="/search.svg" alt="email icon" className="w-4 h-4" />} className="w-[40%] bg-[#3792F91A] border-0 py-6" />
     <div className='flex gap-4 justify-between'>
     <Select onValueChange={(value) => console.log(value)}>
@@ -37,7 +42,7 @@ export default function history() {
     </Select>
     </div>
         </div>
-        <DataTable/>
+        <DataTable columns={columns} data={data}/>
       </div>
     );
 }

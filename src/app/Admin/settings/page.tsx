@@ -1,7 +1,11 @@
-export default function dashboad() {
+export default function settingsPage() {
     return (
-      <div className="bg-[#F6F7F9] p-4 ">
-        <h1>Settings page</h1>
+      <div className="w-[100%] rounded-[8px] mx-auto p-3 ">
+<div className="bg-white p-5 rounded-[8px] mx-auto w-[95%]">
+
+</div>
+
+
       </div>
     );
 }
