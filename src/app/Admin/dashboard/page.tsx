@@ -1,7 +1,7 @@
 'use client'
 
 import dynamic from 'next/dynamic'
-import { Component } from "../../../components/ui/pieChart"
+import Component from "../../../components/ui/pieChart"
 import TotalSales from "../../../components/ui/totalSales"
 import { Prediction } from "../../../components/ui/Prediction"
 // Use dynamic import for the map component to avoid SSR issues
@@ -24,7 +24,9 @@ export default function Dashboard() {
   return (
     <div className="w-[97%]">
       <div className="bg-[#F6F7F9] w-[96%] mx-auto p-2 flex justify-between">
-        <TotalSales />
+        <TotalSales timeRange={''} onTimeRangeChange={function (range: string): void {
+          throw new Error('Function not implemented.')
+        } } />
         <Component />
       </div>
 

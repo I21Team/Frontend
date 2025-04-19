@@ -1,87 +1,96 @@
-"use client"
+'use client';
 
-import { TrendingUp } from "lucide-react"
-import { LabelList, Pie, PieChart } from "recharts"
+import { useEffect, useState } from 'react';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { PieChart, Pie, Cell, LabelList, Tooltip } from 'recharts';
+import { TrendingUp } from 'lucide-react';
 
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card"
-import {
-  ChartConfig,
-  ChartContainer,
-  ChartTooltip,
-  ChartTooltipContent,
-} from "@/components/ui/chart"
-const chartData = [
-  { Product: "Product1", sales: 275, fill: "#4285F4" }, // Blue
-  { Product: "Product2", sales: 200, fill: "#FF9800" }, // Orange
-  { Product: "Product3", sales: 187, fill: "#FF5722" }, // Deep orange
-  { Product: "Product4", sales: 173, fill: "#00BCD4" }, // Cyan
-  { Product: "other", sales: 90, fill: "#9E9E9E" }, // Grey
-]
+// Composant
+const TopProductsChart = () => {
+  interface Product {
+    name: string;
+    value: number;
+    fill: string;
+  }
 
-const chartConfig = {
-  sales: {
-    label: "sales",
-  },
-  Product1: {
-    label: "Product1",
-    color: "#4285F4",
-  },
-  Product2: {
-    label: "Product2",
-    color: "#FF9800",
-  },
-  Product3: {
-    label: "Product3",
-    color: "#FF5722",
-  },
-  Product4: {
-    label: "Product4",
-    color: "#00BCD4",
-  },
-  other: {
-    label: "Other",
-    color: "#9E9E9E",
-  },
-} satisfies ChartConfig
+  const [products, setProducts] = useState<Product[]>([]);
+  const [loading, setLoading] = useState(true);
 
+  const AUTH_TOKEN = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOjEsImVtYWlsIjoidGVzdHRAZXhhbXBsZS5jb20iLCJyb2xlIjoiQURNSU4iLCJpYXQiOjE3NDUwMzI0OTEsImV4cCI6MTc0NTExODg5MX0.NrmyT65FNl-oYgDrwratnF74pq2UkSYQDF0YWhnBilw';
+  const headers = {
+    Authorization: `Bearer ${AUTH_TOKEN}`,
+    'Content-Type': 'application/json',
+  };
 
-export function Component() {
+  useEffect(() => {
+    const fetchTopProducts = async () => {
+      try {
+        const res = await fetch('http://localhost:3001/dashboard/top-products?limit=5', {
+          headers,
+        });
+
+        if (!res.ok) {
+          throw new Error(`Erreur: ${res.status}`);
+        }
+
+        const data = await res.json();
+
+        const formatted = data.map((item: any, index: number) => ({
+          name: item.name,
+          value: item.value,
+          fill: COLORS[index % COLORS.length],
+        }));
+
+        setProducts(formatted);
+      } catch (err) {
+        console.error('Erreur lors du chargement des produits :', err);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchTopProducts();
+  }, []);
+
+  const COLORS = ['#4285F4', '#FF9800', '#FF5722', '#00BCD4', '#9E9E9E'];
+
+  if (loading) {
+    return (
+      <Card className="h-64 flex items-center justify-center">
+        <p>Chargement...</p>
+      </Card>
+    );
+  }
+
   return (
-    <Card className="flex flex-col mx-auto w-[25vw] rounded-[8px] mr-auto">
-      <CardHeader className="items-center pb-0">
-        <CardTitle className="font-bold text-[#003049] text-2xl">Top products</CardTitle>
+    <Card>
+      <CardHeader>
+        <CardTitle className="flex items-center gap-2">
+          <TrendingUp className="text-blue-500" />
+          Top produits
+        </CardTitle>
       </CardHeader>
-      <CardContent className="flex-1 pb-0">
-        <ChartContainer
-          config={chartConfig}
-          className="mx-auto aspect-square max-h-[200px] [&_.recharts-text]:fill-background"
-        >
-          <PieChart>
-            <ChartTooltip
-              content={<ChartTooltipContent nameKey="sales" hideLabel />}
-            />
-            <Pie data={chartData} dataKey="sales">
-              <LabelList
-                dataKey="Product"
-                className="fill-background"
-                stroke="none"
-                fontSize={12}
-                formatter={(value: keyof typeof chartConfig) =>
-                  chartConfig[value]?.label
-                }
-              />
-            </Pie>
-          </PieChart>
-        </ChartContainer>
+      <CardContent>
+        <PieChart width={400} height={250}>
+          <Pie
+            data={products}
+            dataKey="value"
+            nameKey="name"
+            cx="50%"
+            cy="50%"
+            outerRadius={80}
+            label
+          >
+            {products.map((entry, index) => (
+              <Cell key={`cell-${index}`} fill={entry.fill} />
+            ))}
+            <LabelList dataKey="name" position="outside" />
+          </Pie>
+          <Tooltip />
+        </PieChart>
       </CardContent>
-      
     </Card>
-  )
-}
+  );
+};
+
+export default TopProductsChart;

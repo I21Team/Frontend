@@ -26,11 +26,8 @@ const handleLogOut=()=>
       {!isAuthRoute && (
         <aside className=" overflow-hidden w-[230px]  hidden lg:flex flex-col items-center justify-center">
           <div className="lg:text-md h-[95vh] bg-white w-full rounded-[15px] flex flex-col items-center ">
-            <motion.div whileHover={{ scale: 1.05 }} className=" w-full">
-               <h1 className="font-bold text-center mb-20 mx-auto ">
-                LOGO
-               </h1>
-            </motion.div>
+            <Image src={"/logo.svg"} width={170} height={170} alt="Logo" className="ml-auto my-10" />
+
             <div className="w-[230px]  flex flex-col justify-between items-center">
             {sidebarLinks.map((link, index) => (
   <div key={index} className="flex justify-center items-center w-full">

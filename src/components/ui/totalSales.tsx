@@ -1,91 +1,212 @@
 'use client';
-import { ArrowUpRight, ArrowDownRight } from 'lucide-react';
 
-export default function TotalSales({ 
-  totalSales = 234456.6,
-  topStoreSales = 134346,
-  topStoreTrend = 19,
-  topProductSales = 134346,
-  topProductTrend = 19,
-  storesPerformance = 65,
-  storesPerformanceTrend = -6,
-  timeRange = "Last 7 days",
-  timeRangeOptions = ["Last 7 days", "Last 30 days", "Last 90 days"],
-  onTimeRangeChange = () => {},
-  message = "Sales have been booming lately, and it's exciting to see how our strategies are paying off!"
-}) {
-    // Function to format numbers with commas
-    const formatNumber = (num) => {
-        return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+import { Card, CardContent } from '@/components/ui/card';
+import { Label } from './label';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { useEffect, useState } from 'react';
+
+type Props = {
+  timeRange: string;
+  onTimeRangeChange: (range: string) => void;
+};
+
+const TotalSales = ({ timeRange, onTimeRangeChange }: Props) => {
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  const [data, setData] = useState({
+    totalSales: 0,
+    topStoreSales: 0,
+    topStoreTrend: 0,
+    topStoreName: '',
+    topProductSales: 0,
+    topProductTrend: 0,
+    topProductName: '',
+    storesPerformance: 0,
+    storesPerformanceTrend: 0
+  });
+
+  // Auth token
+  const AUTH_TOKEN = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOjEsImVtYWlsIjoidGVzdHRAZXhhbXBsZS5jb20iLCJyb2xlIjoiQURNSU4iLCJpYXQiOjE3NDUwMzI0OTEsImV4cCI6MTc0NTExODg5MX0.NrmyT65FNl-oYgDrwratnF74pq2UkSYQDF0YWhnBilw';
+
+  // Request headers with auth token
+  const headers = {
+    'Authorization': `Bearer ${AUTH_TOKEN}`,
+    'Content-Type': 'application/json'
+  };
+
+  // Convert timeRange to days for API requests
+  const getDays = (range: string) => {
+    switch (range) {
+      case '7 derniers jours': return 7;
+      case '30 derniers jours': return 30;
+      case '90 derniers jours': return 90;
+      default: return 7;
+    }
+  };
+
+  useEffect(() => {
+    const fetchData = async () => {
+      setLoading(true);
+      setError(null);
+      const days = getDays(timeRange);
+      
+      try {
+        // Updated endpoint paths to match the actual controller configuration
+        // Fetch total sales
+        const salesResponse = await fetch(`http://localhost:3001/dashboard/total-sales?days=${days}`, {
+          headers
+        });
+        
+        if (!salesResponse.ok) {
+          throw new Error(`Sales request failed with status ${salesResponse.status}`);
+        }
+        const salesData = await salesResponse.json();
+        console.log('Sales data:', salesData);
+        
+        // Fetch top store
+        const storesResponse = await fetch(`http://localhost:3001/dashboard/top-stores?limit=1`, {
+          headers
+        });
+        
+        if (!storesResponse.ok) {
+          throw new Error(`Stores request failed with status ${storesResponse.status}`);
+        }
+        const storesData = await storesResponse.json();
+        console.log('Stores data:', storesData);
+        
+        // Fetch top product
+        const productsResponse = await fetch(`http://localhost:3001/dashboard/top-products?limit=1`, {
+          headers
+        });
+        
+        if (!productsResponse.ok) {
+          throw new Error(`Products request failed with status ${productsResponse.status}`);
+        }
+        const productsData = await productsResponse.json();
+        console.log('Products data:', productsData);
+        
+        // Fetch store performance
+        const performanceResponse = await fetch('http://localhost:3001/dashboard/store-performance', {
+          headers
+        });
+        
+        if (!performanceResponse.ok) {
+          throw new Error(`Performance request failed with status ${performanceResponse.status}`);
+        }
+        const performanceData = await performanceResponse.json();
+        console.log('Performance data:', performanceData);
+        
+        setData({
+          totalSales: salesData.amount || 0,
+          topStoreSales: storesData[0]?.value || 0,
+          topStoreTrend: storesData[0]?.change || 0,
+          topStoreName: storesData[0]?.name || '',
+          topProductSales: productsData[0]?.value || 0,
+          topProductTrend: productsData[0]?.change || 0,
+          topProductName: productsData[0]?.name || '',
+          storesPerformance: performanceData.percentage || 0,
+          storesPerformanceTrend: performanceData.change || 0
+        });
+      } catch (error) {
+        console.error('Error fetching dashboard data:', error);
+        setError((error as Error).message);
+      } finally {
+        setLoading(false);
+      }
     };
+    
+    fetchData();
+  }, [timeRange]);
 
+  const format = (n: number) => `${n.toLocaleString()} DA`;
+  const trendColor = (trend: number) => trend >= 0 ? 'text-green-600' : 'text-red-600';
+  
+  if (loading) {
+    return <div className="grid grid-cols-2 gap-4 md:grid-cols-4">
+      {[...Array(4)].map((_, i) => (
+        <Card key={i} className="animate-pulse">
+          <CardContent className="p-6 h-32"></CardContent>
+        </Card>
+      ))}
+    </div>;
+  }
+
+  if (error) {
     return (
-        <div className="bg-white p-6 rounded-lg shadow-sm w-[65%] max-w-4xl">
-            {/* Header section */}
-            <div className="flex justify-between items-center mb-4">
-                <h2 className="font-bold text-lg text-[#003049]">Total Sale</h2>
-                <div className="relative inline-block">
-                    <select 
-                        className="appearance-none bg-transparent pr-8 text-gray-400 text-sm focus:outline-none"
-                        value={timeRange}
-                        onChange={(e) => onTimeRangeChange(e.target.value)}
-                    >
-                        {timeRangeOptions.map((option) => (
-                            <option key={option} value={option}>{option}</option>
-                        ))}
-                    </select>
-                    <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-400">
-                        <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7"></path>
-                        </svg>
-                    </div>
-                </div>
-            </div>
-
-            {/* Total sales figure */}
-            <div className="mb-4">
-                <h1 className="text-3xl font-bold text-[#003049]">{formatNumber(totalSales)} DA</h1>
-                <p className="text-sm text-gray-600 mt-2">{message}</p>
-            </div>
-
-            {/* Stats cards */}
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mt-6">
-                {/* Top Store Sales */}
-                <div className="bg-gray-50 p-4 rounded-lg">
-                    <h3 className="text-sm font-medium text-[#003049] mb-2">Top Store Sales</h3>
-                    <div className="flex items-center justify-between">
-                        <span className="text-xl font-bold text-[#003049]">{formatNumber(topStoreSales)} DA</span>
-                        <div className={`flex items-center ${topStoreTrend >= 0 ? 'text-green-500' : 'text-red-500'}`}>
-                            {topStoreTrend >= 0 ? <ArrowUpRight size={16} /> : <ArrowDownRight size={16} />}
-                            <span className="text-sm ml-1">{topStoreTrend >= 0 ? '+' : ''}{topStoreTrend} %</span>
-                        </div>
-                    </div>
-                </div>
-
-                {/* Top Product Sales */}
-                <div className="bg-gray-50 p-4 rounded-lg">
-                    <h3 className="text-sm font-medium text-[#003049] mb-2">Top Product Sales</h3>
-                    <div className="flex items-center justify-between">
-                        <span className="text-xl font-bold text-[#003049]">{formatNumber(topProductSales)} DA</span>
-                        <div className={`flex items-center ${topProductTrend >= 0 ? 'text-green-500' : 'text-red-500'}`}>
-                            {topProductTrend >= 0 ? <ArrowUpRight size={16} /> : <ArrowDownRight size={16} />}
-                            <span className="text-sm ml-1">{topProductTrend >= 0 ? '+' : ''}{topProductTrend} %</span>
-                        </div>
-                    </div>
-                </div>
-
-                {/* Stores Performance */}
-                <div className="bg-amber-50 p-4 rounded-lg">
-                    <h3 className="text-sm font-medium text-[#003049] mb-2">Stores Performant</h3>
-                    <div className="flex items-center justify-between">
-                        <span className="text-xl font-bold text-[#003049]">{storesPerformance} %</span>
-                        <div className={`flex items-center ${storesPerformanceTrend >= 0 ? 'text-green-500' : 'text-red-500'}`}>
-                            {storesPerformanceTrend >= 0 ? <ArrowUpRight size={16} /> : <ArrowDownRight size={16} />}
-                            <span className="text-sm ml-1">{storesPerformanceTrend >= 0 ? '+' : ''}{storesPerformanceTrend} %</span>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
+      <div className="p-4 bg-red-50 border border-red-200 rounded-md text-red-800">
+        <h3 className="font-semibold mb-2">Error loading dashboard data</h3>
+        <p>{error}</p>
+        <button 
+          className="mt-2 px-4 py-2 bg-red-100 hover:bg-red-200 rounded-md"
+          onClick={() => window.location.reload()}
+        >
+          Retry
+        </button>
+      </div>
     );
-}
+  }
+
+  return (
+    <div className="space-y-4">
+      <div className="flex justify-between items-center">
+        <h2 className="text-xl font-semibold">Dashboard</h2>
+        <div className="flex items-center space-x-2">
+          <Label htmlFor="timeRange">Période</Label>
+          <Select value={timeRange} onValueChange={onTimeRangeChange}>
+            <SelectTrigger id="timeRange" className="w-40">
+              <SelectValue placeholder="Période" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="7 derniers jours">7 derniers jours</SelectItem>
+              <SelectItem value="30 derniers jours">30 derniers jours</SelectItem>
+              <SelectItem value="90 derniers jours">90 derniers jours</SelectItem>
+            </SelectContent>
+          </Select>
+        </div>
+      </div>
+      
+      <div className="grid grid-cols-2 gap-4 md:grid-cols-4">
+        <Card>
+          <CardContent className="p-6">
+            <div className="text-sm font-medium text-gray-500">Total des ventes</div>
+            <div className="text-2xl font-bold mt-2">{format(data.totalSales)}</div>
+          </CardContent>
+        </Card>
+        
+        <Card>
+          <CardContent className="p-6">
+            <div className="text-sm font-medium text-gray-500">Meilleur magasin</div>
+            <div className="text-xs text-gray-400">{data.topStoreName}</div>
+            <div className="text-2xl font-bold mt-1">{format(data.topStoreSales)}</div>
+            <div className={`text-sm mt-1 ${trendColor(data.topStoreTrend)}`}>
+              {data.topStoreTrend.toFixed(1)}%
+            </div>
+          </CardContent>
+        </Card>
+        
+        <Card>
+          <CardContent className="p-6">
+            <div className="text-sm font-medium text-gray-500">Produit vedette</div>
+            <div className="text-xs text-gray-400">{data.topProductName}</div>
+            <div className="text-2xl font-bold mt-1">{format(data.topProductSales)}</div>
+            <div className={`text-sm mt-1 ${trendColor(data.topProductTrend)}`}>
+              {data.topProductTrend.toFixed(1)}%
+            </div>
+          </CardContent>
+        </Card>
+        
+        <Card>
+          <CardContent className="p-6">
+            <div className="text-sm font-medium text-gray-500">Performance des magasins</div>
+            <div className="text-2xl font-bold mt-2">{data.storesPerformance.toFixed(1)}%</div>
+            <div className={`text-sm mt-1 ${trendColor(data.storesPerformanceTrend)}`}>
+              {data.storesPerformanceTrend.toFixed(1)}%
+            </div>
+          </CardContent>
+        </Card>
+      </div>
+    </div>
+  );
+};
+
+export default TotalSales;
